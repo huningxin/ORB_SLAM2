@@ -13,7 +13,9 @@ ENDIF()
 
 MESSAGE(STATUS "BUILD TYPE:" ${CMAKE_BUILD_TYPE})
 
-SET (G2O_LIB_TYPE SHARED)
+MESSAGE(STATUS "CMAKE_BINARY_DIR: " ${CMAKE_BINARY_DIR})
+
+SET (G2O_LIB_TYPE STATIC)
 
 # There seems to be an issue with MSVC8
 # see http://eigen.tuxfamily.org/bz/show_bug.cgi?id=83
@@ -24,9 +26,9 @@ endif(MSVC90)
 
 # Set the output directory for the build executables and libraries
 IF(WIN32)
-  SET(g2o_LIBRARY_OUTPUT_DIRECTORY ${g2o_SOURCE_DIR}/bin CACHE PATH "Target for the libraries")
+  SET(g2o_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin CACHE PATH "Target for the libraries")
 ELSE(WIN32)
-  SET(g2o_LIBRARY_OUTPUT_DIRECTORY ${g2o_SOURCE_DIR}/lib CACHE PATH "Target for the libraries")
+  SET(g2o_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib CACHE PATH "Target for the libraries")
 ENDIF(WIN32)
 SET(CMAKE_ARCHIVE_OUTPUT_DIRECTORY ${g2o_LIBRARY_OUTPUT_DIRECTORY})
 SET(CMAKE_LIBRARY_OUTPUT_DIRECTORY ${g2o_LIBRARY_OUTPUT_DIRECTORY})
@@ -44,18 +46,20 @@ ENDIF(UNIX)
 
 # Eigen library parallelise itself, though, presumably due to performance issues
 # OPENMP is experimental. We experienced some slowdown with it
-FIND_PACKAGE(OpenMP)
-SET(G2O_USE_OPENMP OFF CACHE BOOL "Build g2o with OpenMP support (EXPERIMENTAL)")
-IF(OPENMP_FOUND AND G2O_USE_OPENMP)
-  SET (G2O_OPENMP 1)
-  SET(g2o_C_FLAGS "${g2o_C_FLAGS} ${OpenMP_C_FLAGS}")
-  SET(g2o_CXX_FLAGS "${g2o_CXX_FLAGS} -DEIGEN_DONT_PARALLELIZE ${OpenMP_CXX_FLAGS}")
-  MESSAGE(STATUS "Compiling with OpenMP support")
-ENDIF(OPENMP_FOUND AND G2O_USE_OPENMP)
+# FIND_PACKAGE(OpenMP)
+# SET(G2O_USE_OPENMP OFF CACHE BOOL "Build g2o with OpenMP support (EXPERIMENTAL)")
+# IF(OPENMP_FOUND AND G2O_USE_OPENMP)
+#  SET (G2O_OPENMP 1)
+#  SET(g2o_C_FLAGS "${g2o_C_FLAGS} ${OpenMP_C_FLAGS}")
+#  SET(g2o_CXX_FLAGS "${g2o_CXX_FLAGS} -DEIGEN_DONT_PARALLELIZE ${OpenMP_CXX_FLAGS}")
+#  MESSAGE(STATUS "Compiling with OpenMP support")
+# ENDIF(OPENMP_FOUND AND G2O_USE_OPENMP)
 
 # Compiler specific options for gcc
-SET(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3 -march=native") 
-SET(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -O3 -march=native") 
+# SET(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -O3 -march=native") 
+# SET(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -O3 -march=native") 
+SET(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} -stdlib=libstdc++") 
+SET(CMAKE_C_FLAGS_RELEASE "${CMAKE_C_FLAGS_RELEASE} -stdlib=libstdc++") 
 
 # activate warnings !!!
 SET(g2o_C_FLAGS "${g2o_C_FLAGS} -Wall -W")
