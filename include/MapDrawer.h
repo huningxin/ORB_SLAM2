@@ -24,7 +24,10 @@
 #include"Map.h"
 #include"MapPoint.h"
 #include"KeyFrame.h"
-#include<pangolin/pangolin.h>
+//#include<pangolin/pangolin.h>
+namespace pangolin {
+    class OpenGlMatrix;
+}
 
 #include<mutex>
 
