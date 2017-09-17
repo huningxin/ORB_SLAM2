@@ -287,7 +287,8 @@ void Tracking::Track()
         else
             MonocularInitialization();
 
-        mpFrameDrawer->Update(this);
+        if (mpFrameDrawer)
+            mpFrameDrawer->Update(this);
 
         if(mState!=OK)
             return;
@@ -419,7 +420,8 @@ void Tracking::Track()
             mState=LOST;
 
         // Update drawer
-        mpFrameDrawer->Update(this);
+        if (mpFrameDrawer)
+            mpFrameDrawer->Update(this);
 
         // If tracking were good, check if we insert a keyframe
         if(bOK)
@@ -435,7 +437,8 @@ void Tracking::Track()
             else
                 mVelocity = cv::Mat();
 
-            mpMapDrawer->SetCurrentCameraPose(mCurrentFrame.mTcw);
+            if (mpMapDrawer)
+                mpMapDrawer->SetCurrentCameraPose(mCurrentFrame.mTcw);
 
             // Clean VO matches
             for(int i=0; i<mCurrentFrame.N; i++)
@@ -558,7 +561,8 @@ void Tracking::StereoInitialization()
 
         mpMap->mvpKeyFrameOrigins.push_back(pKFini);
 
-        mpMapDrawer->SetCurrentCameraPose(mCurrentFrame.mTcw);
+        if (mpMapDrawer)
+            mpMapDrawer->SetCurrentCameraPose(mCurrentFrame.mTcw);
 
         mState=OK;
     }
@@ -733,7 +737,8 @@ void Tracking::CreateInitialMapMonocular()
 
     mpMap->SetReferenceMapPoints(mvpLocalMapPoints);
 
-    mpMapDrawer->SetCurrentCameraPose(pKFcur->GetPose());
+    if (mpMapDrawer)
+        mpMapDrawer->SetCurrentCameraPose(pKFcur->GetPose());
 
     mpMap->mvpKeyFrameOrigins.push_back(pKFini);
 
