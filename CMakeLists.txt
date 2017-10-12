@@ -1,14 +1,20 @@
-cmake_minimum_required(VERSION 2.8)
-project(ORB_SLAM2)
+set(the_description "The ORB-SLAM2 module")
+set(MODULE_NAME orbslam2)
 
-IF(NOT CMAKE_BUILD_TYPE)
-  SET(CMAKE_BUILD_TYPE Release)
-ENDIF()
+ocv_add_module(orbslam2 opencv_core opencv_features2d opencv_calib3d WRAP js)
 
-MESSAGE("Build type: " ${CMAKE_BUILD_TYPE})
-
-# set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS}  -Wall  -O3 -march=native ")
-# set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wall   -O3 -march=native")
+ocv_module_include_directories(
+${PROJECT_SOURCE_DIR}
+${PROJECT_SOURCE_DIR}/include
+${PROJECT_SOURCE_DIR}/Thirdparty/DBoW2/DBoW2
+${PROJECT_SOURCE_DIR}/Thirdparty/DBoW2/DUtils
+${PROJECT_SOURCE_DIR}/Thirdparty/g2o/
+${PROJECT_SOURCE_DIR}/Thirdparty/g2o/g2o/core
+${PROJECT_SOURCE_DIR}/Thirdparty/g2o/g2o/solvers
+${PROJECT_SOURCE_DIR}/Thirdparty/g2o/g2o/stuff
+${PROJECT_SOURCE_DIR}/Thirdparty/g2o/g2o/types
+${PROJECT_SOURCE_DIR}/Thirdparty/eigen
+)
 
 # Check C++11 or C++0x support
 include(CheckCXXCompilerFlag)
@@ -26,30 +32,30 @@ else()
    message(FATAL_ERROR "The compiler ${CMAKE_CXX_COMPILER} has no C++11 support. Please use a different C++ compiler.")
 endif()
 
-# LIST(APPEND CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake_modules)
+SET(G2O_CXX_COMPILER "${CMAKE_CXX_COMPILER_ID} ${CMAKE_CXX_COMPILER}")
+configure_file(${PROJECT_SOURCE_DIR}/Thirdparty/g2o/config.h.in ${PROJECT_SOURCE_DIR}/Thirdparty/g2o/config.h)
 
-# find_package(OpenCV 3.0 QUIET)
-# if(NOT OpenCV_FOUND)
-#   find_package(OpenCV 2.4.3 QUIET)
-#   if(NOT OpenCV_FOUND)
-#      message(FATAL_ERROR "OpenCV > 2.4.3 not found.")
-#   endif()
-# endif()
-
-# find_package(Eigen3 3.1.0 REQUIRED)
-# find_package(Pangolin REQUIRED)
-
-include_directories(
-${PROJECT_SOURCE_DIR}
-${PROJECT_SOURCE_DIR}/include
-${EIGEN3_INCLUDE_DIR}
-${OpenCV_INCLUDE_DIRS}
-# ${Pangolin_INCLUDE_DIRS}
-)
-
-set(LIBRARY_OUTPUT_PATH ${PROJECT_SOURCE_DIR}/lib)
-
-add_library(${PROJECT_NAME}_lib STATIC
+ocv_set_module_sources(
+include/Converter.h    
+include/Frame.h        
+include/KeyFrameDatabase.h  
+include/LocalMapping.h  
+include/MapDrawer.h  
+include/MapPoint.h   
+include/ORBextractor.h  
+include/ORBVocabulary.h  
+include/Sim3Solver.h  
+include/Tracking.h
+include/FrameDrawer.h  
+include/Initializer.h  
+include/KeyFrame.h          
+include/LoopClosing.h   
+include/Map.h        
+include/Optimizer.h  
+include/ORBmatcher.h    
+include/PnPsolver.h      
+include/System.h      
+include/Viewer.h
 src/System.cc
 src/Tracking.cc
 src/LocalMapping.cc
@@ -69,31 +75,107 @@ src/KeyFrameDatabase.cc
 src/Sim3Solver.cc
 src/Initializer.cc
 # src/Viewer.cc
+# DBoW2
+Thirdparty/DBoW2/DBoW2/BowVector.h
+Thirdparty/DBoW2/DBoW2/FORB.h 
+Thirdparty/DBoW2/DBoW2/FClass.h       
+Thirdparty/DBoW2/DBoW2/FeatureVector.h
+Thirdparty/DBoW2/DBoW2/ScoringObject.h   
+Thirdparty/DBoW2/DBoW2/TemplatedVocabulary.h
+Thirdparty/DBoW2/DUtils/Random.h
+Thirdparty/DBoW2/DUtils/Timestamp.h
+Thirdparty/DBoW2/DBoW2/BowVector.cpp
+Thirdparty/DBoW2/DBoW2/FORB.cpp      
+Thirdparty/DBoW2/DBoW2/FeatureVector.cpp
+Thirdparty/DBoW2/DBoW2/ScoringObject.cpp
+Thirdparty/DBoW2/DUtils/Random.cpp
+Thirdparty/DBoW2/DUtils/Timestamp.cpp
+# g2o
+Thirdparty/g2o/g2o/types/types_sba.h
+Thirdparty/g2o/g2o/types/types_six_dof_expmap.h
+Thirdparty/g2o/g2o/types/types_sba.cpp
+Thirdparty/g2o/g2o/types/types_six_dof_expmap.cpp
+Thirdparty/g2o/g2o/types/types_seven_dof_expmap.cpp
+Thirdparty/g2o/g2o/types/types_seven_dof_expmap.h
+Thirdparty/g2o/g2o/types/se3quat.h
+Thirdparty/g2o/g2o/types/se3_ops.h
+Thirdparty/g2o/g2o/types/se3_ops.hpp
+#core
+Thirdparty/g2o/g2o/core/base_edge.h
+Thirdparty/g2o/g2o/core/base_binary_edge.h
+Thirdparty/g2o/g2o/core/hyper_graph_action.cpp
+Thirdparty/g2o/g2o/core/base_binary_edge.hpp
+Thirdparty/g2o/g2o/core/hyper_graph_action.h
+Thirdparty/g2o/g2o/core/base_multi_edge.h           
+Thirdparty/g2o/g2o/core/hyper_graph.cpp
+Thirdparty/g2o/g2o/core/base_multi_edge.hpp         
+Thirdparty/g2o/g2o/core/hyper_graph.h
+Thirdparty/g2o/g2o/core/base_unary_edge.h          
+Thirdparty/g2o/g2o/core/linear_solver.h
+Thirdparty/g2o/g2o/core/base_unary_edge.hpp         
+Thirdparty/g2o/g2o/core/marginal_covariance_cholesky.cpp
+Thirdparty/g2o/g2o/core/base_vertex.h               
+Thirdparty/g2o/g2o/core/marginal_covariance_cholesky.h
+Thirdparty/g2o/g2o/core/base_vertex.hpp             
+Thirdparty/g2o/g2o/core/matrix_structure.cpp
+Thirdparty/g2o/g2o/core/batch_stats.cpp             
+Thirdparty/g2o/g2o/core/matrix_structure.h
+Thirdparty/g2o/g2o/core/batch_stats.h               
+Thirdparty/g2o/g2o/core/openmp_mutex.h
+Thirdparty/g2o/g2o/core/block_solver.h              
+Thirdparty/g2o/g2o/core/block_solver.hpp            
+Thirdparty/g2o/g2o/core/parameter.cpp               
+Thirdparty/g2o/g2o/core/parameter.h                 
+Thirdparty/g2o/g2o/core/cache.cpp                   
+Thirdparty/g2o/g2o/core/cache.h
+Thirdparty/g2o/g2o/core/optimizable_graph.cpp       
+Thirdparty/g2o/g2o/core/optimizable_graph.h         
+Thirdparty/g2o/g2o/core/solver.cpp                  
+Thirdparty/g2o/g2o/core/solver.h
+Thirdparty/g2o/g2o/core/creators.h                 
+Thirdparty/g2o/g2o/core/optimization_algorithm_factory.cpp
+Thirdparty/g2o/g2o/core/estimate_propagator.cpp     
+Thirdparty/g2o/g2o/core/optimization_algorithm_factory.h
+Thirdparty/g2o/g2o/core/estimate_propagator.h       
+Thirdparty/g2o/g2o/core/factory.cpp                 
+Thirdparty/g2o/g2o/core/optimization_algorithm_property.h
+Thirdparty/g2o/g2o/core/factory.h                   
+Thirdparty/g2o/g2o/core/sparse_block_matrix.h
+Thirdparty/g2o/g2o/core/sparse_optimizer.cpp  
+Thirdparty/g2o/g2o/core/sparse_block_matrix.hpp
+Thirdparty/g2o/g2o/core/sparse_optimizer.h
+Thirdparty/g2o/g2o/core/hyper_dijkstra.cpp 
+Thirdparty/g2o/g2o/core/hyper_dijkstra.h
+Thirdparty/g2o/g2o/core/parameter_container.cpp     
+Thirdparty/g2o/g2o/core/parameter_container.h
+Thirdparty/g2o/g2o/core/optimization_algorithm.cpp 
+Thirdparty/g2o/g2o/core/optimization_algorithm.h
+Thirdparty/g2o/g2o/core/optimization_algorithm_with_hessian.cpp 
+Thirdparty/g2o/g2o/core/optimization_algorithm_with_hessian.h
+Thirdparty/g2o/g2o/core/optimization_algorithm_levenberg.cpp 
+Thirdparty/g2o/g2o/core/optimization_algorithm_levenberg.h
+Thirdparty/g2o/g2o/core/jacobian_workspace.cpp 
+Thirdparty/g2o/g2o/core/jacobian_workspace.h
+Thirdparty/g2o/g2o/core/robust_kernel.cpp 
+Thirdparty/g2o/g2o/core/robust_kernel.h
+Thirdparty/g2o/g2o/core/robust_kernel_factory.cpp
+Thirdparty/g2o/g2o/core/robust_kernel_factory.h
+Thirdparty/g2o/g2o/core/robust_kernel_impl.cpp 
+Thirdparty/g2o/g2o/core/robust_kernel_impl.h
+#stuff
+Thirdparty/g2o/g2o/stuff/string_tools.h
+Thirdparty/g2o/g2o/stuff/color_macros.h 
+Thirdparty/g2o/g2o/stuff/macros.h
+Thirdparty/g2o/g2o/stuff/timeutil.cpp
+Thirdparty/g2o/g2o/stuff/misc.h
+Thirdparty/g2o/g2o/stuff/timeutil.h
+Thirdparty/g2o/g2o/stuff/os_specific.c    
+Thirdparty/g2o/g2o/stuff/os_specific.h
+Thirdparty/g2o/g2o/stuff/string_tools.cpp
+Thirdparty/g2o/g2o/stuff/property.cpp       
+Thirdparty/g2o/g2o/stuff/property.h
 )
 
+ocv_create_module()
 
-add_executable(${PROJECT_NAME} js/binding.cpp)
-
-set_target_properties(${PROJECT_NAME} PROPERTIES LINK_FLAGS "--memory-init-file 0 -s TOTAL_MEMORY=134217728 -s ALLOW_MEMORY_GROWTH=1 -s MODULARIZE=1 -s EXPORT_NAME=\"'slam'\" -s DEMANGLE_SUPPORT=1 -s FORCE_FILESYSTEM=1 --use-preload-plugins --bind --post-js ${PROJECT_SOURCE_DIR}/js/helpers.js -Wno-missing-prototypes")
-
-target_link_libraries(${PROJECT_NAME}
-${PROJECT_NAME}_lib
-${PROJECT_SOURCE_DIR}/Thirdparty/DBoW2/lib/libDBoW2.a
-${PROJECT_SOURCE_DIR}/Thirdparty/g2o/lib/libg2o.a
-${OpenCV_LIB_DIR}/libopencv_calib3d.a 
-${OpenCV_LIB_DIR}/libopencv_features2d.a
-${OpenCV_LIB_DIR}/libopencv_imgproc.a
-${OpenCV_LIB_DIR}/libopencv_core.a
-)
-
-# add UMD wrapper
-add_custom_command(
-   OUTPUT ${CMAKE_BINARY_DIR}/slam.js
-   COMMAND "python" "${PROJECT_SOURCE_DIR}/js/make_umd.py" "${CMAKE_BINARY_DIR}/ORB_SLAM2.js" "${CMAKE_BINARY_DIR}/slam.js"
-   DEPENDS "${CMAKE_BINARY_DIR}/ORB_SLAM2.js"
-   DEPENDS "${PROJECT_SOURCE_DIR}/js/make_umd.py")
-
-add_custom_target(slam.js ALL
-                  DEPENDS ${CMAKE_BINARY_DIR}/slam.js
-                  DEPENDS ${PROJECT_NAME})
-
+set_target_properties(${the_module} PROPERTIES COMPILE_FLAGS "-Wno-non-virtual-dtor")

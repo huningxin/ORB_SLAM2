@@ -21,8 +21,9 @@
 
 #include "Tracking.h"
 
-#include<opencv2/core/core.hpp>
-#include<opencv2/features2d/features2d.hpp>
+#include "opencv2/core.hpp"
+#include "opencv2/imgproc.hpp"
+#include "opencv2/features2d.hpp"
 
 #include"ORBmatcher.h"
 #include"FrameDrawer.h"
@@ -43,6 +44,7 @@
 
 
 using namespace std;
+using namespace cv;
 
 namespace ORB_SLAM2
 {
@@ -177,26 +179,26 @@ cv::Mat Tracking::GrabImageStereo(const cv::Mat &imRectLeft, const cv::Mat &imRe
     {
         if(mbRGB)
         {
-            cvtColor(mImGray,mImGray,CV_RGB2GRAY);
-            cvtColor(imGrayRight,imGrayRight,CV_RGB2GRAY);
+            cvtColor(mImGray,mImGray,COLOR_RGB2GRAY);
+            cvtColor(imGrayRight,imGrayRight,COLOR_RGB2GRAY);
         }
         else
         {
-            cvtColor(mImGray,mImGray,CV_BGR2GRAY);
-            cvtColor(imGrayRight,imGrayRight,CV_BGR2GRAY);
+            cvtColor(mImGray,mImGray,COLOR_BGR2GRAY);
+            cvtColor(imGrayRight,imGrayRight,COLOR_BGR2GRAY);
         }
     }
     else if(mImGray.channels()==4)
     {
         if(mbRGB)
         {
-            cvtColor(mImGray,mImGray,CV_RGBA2GRAY);
-            cvtColor(imGrayRight,imGrayRight,CV_RGBA2GRAY);
+            cvtColor(mImGray,mImGray,COLOR_RGBA2GRAY);
+            cvtColor(imGrayRight,imGrayRight,COLOR_RGBA2GRAY);
         }
         else
         {
-            cvtColor(mImGray,mImGray,CV_BGRA2GRAY);
-            cvtColor(imGrayRight,imGrayRight,CV_BGRA2GRAY);
+            cvtColor(mImGray,mImGray,COLOR_BGRA2GRAY);
+            cvtColor(imGrayRight,imGrayRight,COLOR_BGRA2GRAY);
         }
     }
 
@@ -216,16 +218,16 @@ cv::Mat Tracking::GrabImageRGBD(const cv::Mat &imRGB,const cv::Mat &imD, const d
     if(mImGray.channels()==3)
     {
         if(mbRGB)
-            cvtColor(mImGray,mImGray,CV_RGB2GRAY);
+            cvtColor(mImGray,mImGray,COLOR_RGB2GRAY);
         else
-            cvtColor(mImGray,mImGray,CV_BGR2GRAY);
+            cvtColor(mImGray,mImGray,COLOR_BGR2GRAY);
     }
     else if(mImGray.channels()==4)
     {
         if(mbRGB)
-            cvtColor(mImGray,mImGray,CV_RGBA2GRAY);
+            cvtColor(mImGray,mImGray,COLOR_RGBA2GRAY);
         else
-            cvtColor(mImGray,mImGray,CV_BGRA2GRAY);
+            cvtColor(mImGray,mImGray,COLOR_BGRA2GRAY);
     }
 
     if((fabs(mDepthMapFactor-1.0f)>1e-5) || imDepth.type()!=CV_32F)
@@ -246,16 +248,16 @@ cv::Mat Tracking::GrabImageMonocular(const cv::Mat &im, const double &timestamp)
     if(mImGray.channels()==3)
     {
         if(mbRGB)
-            cvtColor(mImGray,mImGray,CV_RGB2GRAY);
+            cvtColor(mImGray,mImGray,COLOR_RGB2GRAY);
         else
-            cvtColor(mImGray,mImGray,CV_BGR2GRAY);
+            cvtColor(mImGray,mImGray,COLOR_BGR2GRAY);
     }
     else if(mImGray.channels()==4)
     {
         if(mbRGB)
-            cvtColor(mImGray,mImGray,CV_RGBA2GRAY);
+            cvtColor(mImGray,mImGray,COLOR_RGBA2GRAY);
         else
-            cvtColor(mImGray,mImGray,CV_BGRA2GRAY);
+            cvtColor(mImGray,mImGray,COLOR_BGRA2GRAY);
     }
 
     if(mState==NOT_INITIALIZED || mState==NO_IMAGES_YET)

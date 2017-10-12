@@ -23,6 +23,8 @@
 #include "ORBmatcher.h"
 #include <thread>
 
+#include "opencv2/imgproc.hpp"
+
 namespace ORB_SLAM2
 {
 
