@@ -16,6 +16,8 @@ let stream = null;
 
 let slam = null;
 
+let trStatus = -2;
+
 let info = document.getElementById('info');
 
 function startCamera() {
@@ -74,14 +76,32 @@ function startVideoProcessing() {
   requestAnimationFrame(processVideo);
 }
 
+let count = 0;
+
 function processVideo() {
   stats.begin();
   canvasInputCtx.drawImage(video, 0, 0, videoWidth, videoHeight);
   let imageData = canvasInputCtx.getImageData(0, 0, videoWidth, videoHeight);
   srcMat.data.set(imageData.data);
 
-  let pose = slam.TrackMonocular(srcMat, performance.now())
-  console.log('Tracking state: ' + slam.GetTrackingState())
+  let pose = slam.TrackMonocular(srcMat, performance.now());
+  console.log('No. ' + ++count);
+  let st = slam.GetTrackingState();
+  if (trStatus != st) {
+    trStatus = st;
+    switch (trStatus) {
+      case -1: console.log('Tracking state: ' + 'system not ready'); break;
+      case 0: console.log('Tracking state: ' + 'no images yet'); break;
+      case 1: console.log('Tracking state: ' + 'not initialized'); break;
+      case 2: console.log('Tracking state: ' + 'ok'); break;
+      case 3: console.log('Tracking state: ' + 'lost'); break;
+    }
+  }
+  if(st == 2) {
+    console.log(pose.data32F);
+    console.log("GetKeyFramesInMap: " + slam.GetKeyFramesInMap());
+    console.log("GetMapPointsInMap: " + slam.GetMapPointsInMap());
+  }
   pose.delete();
   
   canvasOutputCtx.drawImage(canvasInput, 0, 0, videoWidth, videoHeight);
@@ -120,7 +140,7 @@ function opencvIsReady() {
   }
   info.innerHTML = '';
   initUI();
-  slam = new cv.SLAM('ORBvoc.txt', 'c270.yaml', cv.MONOCULAR)
+  slam = new cv.SLAM('ORBvoc.bin', 'c270.yaml', cv.MONOCULAR);
   console.log('SLAM is ready');
-  startCamera();
+   startCamera();
 }

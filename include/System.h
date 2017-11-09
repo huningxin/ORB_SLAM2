@@ -25,6 +25,7 @@
 #include<string>
 #include<thread>
 #include "opencv2/core.hpp"
+#include "opencv2/imgproc.hpp"
 
 #include "Tracking.h"
 #include "FrameDrawer.h"
@@ -119,6 +120,19 @@ public:
     // Information from most recent processed frame
     // You can call this right after TrackMonocular (or stereo or RGBD)
     int GetTrackingState();
+
+    // Get Map values
+    int GetKeyFramesInMap() {
+        if(mpMap)
+            return mpMap->KeyFramesInMap();
+        return -1;
+    }
+    int GetMapPointsInMap() {
+        if(mpMap)
+            return mpMap->MapPointsInMap();
+        return -1;
+    }
+
     std::vector<MapPoint*> GetTrackedMapPoints();
     std::vector<cv::KeyPoint> GetTrackedKeyPointsUn();
 
