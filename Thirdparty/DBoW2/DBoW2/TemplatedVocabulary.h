@@ -1462,6 +1462,7 @@ void TemplatedVocabulary<TDescriptor,F>::saveToTextFile(const std::string &filen
 
 // --------------------------------------------------------------------------
 
+// Take and rebase code from raulmur#21
 template<class TDescriptor, class F>
 bool TemplatedVocabulary<TDescriptor,F>::loadFromBinaryFile(const std::string &filename) {
   fstream f;
