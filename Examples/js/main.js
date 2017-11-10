@@ -34,8 +34,8 @@ function startCamera() {
 
   video.addEventListener("canplay", function(ev){
     if (!streaming) {
-      videoWidth = video.videoWidth;
-      videoHeight = video.videoHeight;
+      videoWidth = 320;
+      videoHeight = 240;
       video.setAttribute("width", videoWidth);
       video.setAttribute("height", videoHeight);
       canvasOutput.width = videoWidth;
@@ -70,8 +70,8 @@ function startVideoProcessing() {
   canvasBuffer.height = videoHeight;
   canvasBufferCtx = canvasBuffer.getContext('2d');
   
-  srcMat = new cv.Mat(videoHeight, videoWidth, cv.CV_8UC4);
-  grayMat = new cv.Mat(videoHeight, videoWidth, cv.CV_8UC1);
+  srcMat = new Module.Mat(videoHeight, videoWidth, Module.CV_8UC4);
+  grayMat = new Module.Mat(videoHeight, videoWidth, Module.CV_8UC1);
   
   requestAnimationFrame(processVideo);
 }
@@ -85,9 +85,10 @@ function processVideo() {
   srcMat.data.set(imageData.data);
 
   let pose = slam.TrackMonocular(srcMat, performance.now());
-  console.log('No. ' + ++count);
+  ++count;
   let st = slam.GetTrackingState();
   if (trStatus != st) {
+    console.log('No. ' + count);
     trStatus = st;
     switch (trStatus) {
       case -1: console.log('Tracking state: ' + 'system not ready'); break;
@@ -140,7 +141,7 @@ function opencvIsReady() {
   }
   info.innerHTML = '';
   initUI();
-  slam = new cv.SLAM('ORBvoc.bin', 'c270.yaml', cv.MONOCULAR);
+  slam = new Module.SLAM('ORBvoc.bin', 'c270.yaml', Module.MONOCULAR);
   console.log('SLAM is ready');
-   startCamera();
+  startCamera();
 }
