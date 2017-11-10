@@ -34,8 +34,8 @@ function startCamera() {
 
   video.addEventListener("canplay", function(ev){
     if (!streaming) {
-      videoWidth = 320;
-      videoHeight = 240;
+      videoWidth = video.videoWidth;
+      videoHeight = video.videoHeight;
       video.setAttribute("width", videoWidth);
       video.setAttribute("height", videoHeight);
       canvasOutput.width = videoWidth;
