@@ -16,6 +16,8 @@ let stream = null;
 
 let slam = null;
 
+let trStatus = -2;
+
 let info = document.getElementById('info');
 
 function startCamera() {
@@ -68,11 +70,13 @@ function startVideoProcessing() {
   canvasBuffer.height = videoHeight;
   canvasBufferCtx = canvasBuffer.getContext('2d');
   
-  srcMat = new cv.Mat(videoHeight, videoWidth, cv.CV_8UC4);
-  grayMat = new cv.Mat(videoHeight, videoWidth, cv.CV_8UC1);
+  srcMat = new Module.Mat(videoHeight, videoWidth, Module.CV_8UC4);
+  grayMat = new Module.Mat(videoHeight, videoWidth, Module.CV_8UC1);
   
   requestAnimationFrame(processVideo);
 }
+
+let count = 0;
 
 function processVideo() {
   stats.begin();
@@ -80,8 +84,25 @@ function processVideo() {
   let imageData = canvasInputCtx.getImageData(0, 0, videoWidth, videoHeight);
   srcMat.data.set(imageData.data);
 
-  let pose = slam.TrackMonocular(srcMat, performance.now())
-  console.log('Tracking state: ' + slam.GetTrackingState())
+  let pose = slam.TrackMonocular(srcMat, performance.now());
+  ++count;
+  let st = slam.GetTrackingState();
+  if (trStatus != st) {
+    console.log('No. ' + count);
+    trStatus = st;
+    switch (trStatus) {
+      case -1: console.log('Tracking state: ' + 'system not ready'); break;
+      case 0: console.log('Tracking state: ' + 'no images yet'); break;
+      case 1: console.log('Tracking state: ' + 'not initialized'); break;
+      case 2: console.log('Tracking state: ' + 'ok'); break;
+      case 3: console.log('Tracking state: ' + 'lost'); break;
+    }
+  }
+  if(st == 2) {
+    console.log(pose.data32F);
+    console.log("GetKeyFramesInMap: " + slam.GetKeyFramesInMap());
+    console.log("GetMapPointsInMap: " + slam.GetMapPointsInMap());
+  }
   pose.delete();
   
   canvasOutputCtx.drawImage(canvasInput, 0, 0, videoWidth, videoHeight);
@@ -120,7 +141,7 @@ function opencvIsReady() {
   }
   info.innerHTML = '';
   initUI();
-  slam = new cv.SLAM('ORBvoc.txt', 'c270.yaml', cv.MONOCULAR)
+  slam = new Module.SLAM('ORBvoc.bin', 'c270.yaml', Module.MONOCULAR);
   console.log('SLAM is ready');
   startCamera();
 }

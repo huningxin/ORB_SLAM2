@@ -76,11 +76,10 @@ Frame::Frame(const cv::Mat &imLeft, const cv::Mat &imRight, const double &timeSt
     mvLevelSigma2 = mpORBextractorLeft->GetScaleSigmaSquares();
     mvInvLevelSigma2 = mpORBextractorLeft->GetInverseScaleSigmaSquares();
 
+
     // ORB extraction
-    thread threadLeft(&Frame::ExtractORB,this,0,imLeft);
-    thread threadRight(&Frame::ExtractORB,this,1,imRight);
-    threadLeft.join();
-    threadRight.join();
+    ExtractORB(0,imLeft);
+    ExtractORB(1,imRight);
 
     N = mvKeys.size();
 
